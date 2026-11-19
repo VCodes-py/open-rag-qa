@@ -148,39 +148,6 @@ Three ready-to-test documents are included in `/sample_documents`:
 
 ---
 
-## ☁️ Deploying to the Cloud (Render + Vercel)
-
-You can deploy this full-stack RAG app live for free:
-- **Backend:** [Render](https://render.com) (Free Tier Web Service)
-- **Frontend:** [Vercel](https://vercel.com) (Free Tier Frontend Hosting)
-
-### 1. Backend on Render
-1. Push your repository to **GitHub**.
-2. Log in to [dashboard.render.com](https://dashboard.render.com) and click **New + > Web Service**.
-3. Connect your GitHub repository.
-4. Set the following settings:
-   - **Environment:** `Python 3`
-   - **Build Command:** `pip install -r backend/requirements.txt`
-   - **Start Command:** `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
-5. In **Environment Variables**, add:
-   - `PYTHON_VERSION`: `3.11.9`
-   - `GROQ_API_KEY`: *(Your free API key from [https://console.groq.com/keys](https://console.groq.com/keys))*
-   *(Note: Groq provides free, ultra-fast cloud inference for open-source LLaMA 3.2 / Mistral, allowing the backend to run within Render's free 512MB RAM tier without needing local Ollama!)*
-6. Click **Deploy Web Service**. Once deployed, copy your Render URL (e.g. `https://your-rag-backend.onrender.com`).
-
----
-
-### 2. Frontend on Vercel
-1. Log in to [vercel.com](https://vercel.com) and click **Add New > Project**.
-2. Import your GitHub repository.
-3. In **Root Directory**, click edit and select **`frontend`**.
-4. In **Environment Variables**, add:
-   - Key: `VITE_API_BASE_URL`
-   - Value: `https://your-rag-backend.onrender.com` *(your Render URL from step 1)*
-5. Click **Deploy**! Your app is now live with a custom HTTPS URL.
-
----
-
 ## 📂 Project Directory Structure
 
 ```
