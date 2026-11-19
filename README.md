@@ -18,6 +18,37 @@ A completely private, local Retrieval-Augmented Generation (RAG) system with rea
 
 ---
 
+## 💡 Why Local RAG? (Comparison & Value)
+
+| Capability | Standard Cloud AI (ChatGPT / Claude) | **Local Open-Source RAG** |
+| :--- | :--- | :--- |
+| **Privacy & Security** | ⚠️ Documents uploaded to external servers | 🛡️ **100% Local:** Never leaves your hardware |
+| **Cost** | 💸 \$20/month or pay-per-token API bills | 💰 **\$0 Forever:** No API keys or subscriptions |
+| **Hallucination Prevention** | ❌ Can fabricate plausible-sounding answers | 🎯 **Strict Grounding:** Answers only from your text |
+| **Source Traceability** | ⚠️ Vague or no citations | 🔍 **Clickable Citations:** File, page # & confidence % |
+| **Connectivity** | ❌ Requires constant high-speed internet | ✈️ **Fully Offline:** Works on flights & remote areas |
+| **Data Retention Limits** | ⚠️ Governed by third-party data policies | 🔒 **Full Ownership:** You own the models & database |
+
+### 🎯 Real-World Use Cases
+
+- ⚖️ **Legal & Contracts:** Safely query NDAs, employment agreements, and vendor contracts without exposing confidential clauses to third-party APIs.
+- 📊 **Finance & Taxes:** Search through bank statements, audit trails, and tax filings with complete data security.
+- 🔬 **Research & Study:** Ingest 100+ page academic PDFs, textbook chapters, and technical manuals; ask complex questions and jump to the exact cited pages.
+- 💼 **Internal Company Knowledge:** Run an on-premise knowledge assistant for internal team documentation without compliance or GDPR concerns.
+
+### ⚡ The Two-Stage Retrieval Advantage
+
+```
+Standard (Naive) RAG:
+User Query ──► Vector Search ────────► Top Chunks (Noisy / Out-of-Context) ──► Hallucinated Answer ❌
+
+This Two-Stage Pipeline:
+User Query ──► FAISS Dense Search ──► Top 10 Candidates ──► MS-MARCO Cross-Encoder ──► Top 3 High-Precision Passages ──► Grounded, Verified Answer ✅
+```
+*Dense search finds semantic candidates at lightning speed (~10ms); the Cross-Encoder performs deep token-level cross-attention to filter out false positives and ensure 100% precision.*
+
+---
+
 ## 🏗️ Architecture Flow
 
 ```
