@@ -116,7 +116,7 @@ def rerank_passages(
     return reranked[:top_k_rerank]
 
 
-def check_ollama_port(timeout: float = 0.2) -> bool:
+def check_ollama_port(timeout: float = 1.0) -> bool:
     """Fast socket-level connectivity check for Ollama before attempting generation."""
     try:
         parsed = urlparse(OLLAMA_BASE_URL)
@@ -268,10 +268,12 @@ async def stream_rag_response(
         )
         return
 
+    yield format_sse("status", {"step": "generating", "message": f"Generating answer with {model}..."})
+
     try:
         async with httpx.AsyncClient(timeout=120.0) as client:
             req = client.build_request("POST", ollama_url, json=payload)
-            response = await asyncio.wait_for(client.send(req, stream=True), timeout=3.0)
+            response = await client.send(req, stream=True)
             if response.status_code != 200:
                 err_msg = f"Ollama returned HTTP {response.status_code}."
                 logger.error(err_msg)

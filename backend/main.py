@@ -34,7 +34,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def check_ollama_port(timeout: float = 0.2) -> bool:
+def check_ollama_port(timeout: float = 1.0) -> bool:
     """Fast socket-level connectivity check for Ollama before attempting HTTP requests."""
     try:
         parsed = urlparse(OLLAMA_BASE_URL)
