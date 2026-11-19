@@ -1,11 +1,13 @@
 import asyncio
 import logging
+import os
 import socket
 from urllib.parse import urlparse
 from typing import List, Optional
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import httpx
 
@@ -222,6 +224,21 @@ async def chat_endpoint(request: ChatRequest):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+# Mount and serve built frontend SPA if available (e.g. on Hugging Face Spaces / Production)
+dist_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+if os.path.exists(dist_path):
+    assets_path = os.path.join(dist_path, "assets")
+    if os.path.exists(assets_path):
+        app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
+        file_path = os.path.join(dist_path, full_path)
+        if full_path and os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(dist_path, "index.html"))
 
 
 if __name__ == "__main__":
