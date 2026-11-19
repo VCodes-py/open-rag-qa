@@ -101,11 +101,6 @@ def list_models():
             "default_model": DEFAULT_OLLAMA_MODEL,
             "error": f"Ollama is offline or unreachable at {OLLAMA_BASE_URL}",
         }
-            "ollama_running": False,
-            "models": [],
-            "default_model": DEFAULT_OLLAMA_MODEL,
-            "error": f"Ollama is offline or unreachable at {OLLAMA_BASE_URL}",
-        }
 
     try:
         with httpx.Client(timeout=3.0) as client:
