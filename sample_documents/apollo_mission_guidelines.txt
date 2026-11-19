@@ -1,0 +1,31 @@
+APOLLO MISSION LOGISTICS AND FLIGHT MANUAL SPECIFICATIONS
+Document Classification: Historical Engineering Archive (NASA Apollo Program)
+
+SECTION 1: SATURN V LAUNCH VEHICLE ARCHITECTURE
+The Saturn V three-stage rocket stood 363 feet (110.6 meters) tall and possessed a total launch mass of approximately 6,540,000 pounds (2,970,000 kilograms) fully fueled.
+
+1.1 S-IC First Stage:
+- Propulsion: 5 Rocketdyne F-1 engines burning RP-1 (refined kerosene) and liquid oxygen (LOX).
+- Total Thrust: 7,500,000 pounds-force (33,400 kilonewtons) at sea level.
+- Burn Duration: Approximately 168 seconds, accelerating the vehicle to Mach 7 (approx. 6,100 mph / 9,800 km/h) before staging at an altitude of 42 miles (68 kilometers).
+
+1.2 S-II Second Stage:
+- Propulsion: 5 Rocketdyne J-2 engines utilizing cryogenic liquid hydrogen (LH2) and liquid oxygen (LOX).
+- Total Thrust: 1,000,000 pounds-force (4,400 kilonewtons).
+- Burn Duration: Approximately 360 seconds, lifting the Apollo stack into near-orbital velocity.
+
+1.3 S-IVB Third Stage:
+- Propulsion: Single Rocketdyne J-2 engine capable of restart in vacuum.
+- Primary Tasks: Inserted spacecraft into circular 115-nautical-mile Earth Parking Orbit, followed by the critical Trans-Lunar Injection (TLI) burn of approximately 350 seconds.
+
+SECTION 2: APOLLO GUIDANCE COMPUTER (AGC)
+Developed by the MIT Instrumentation Laboratory, the AGC utilized pioneering silicon integrated circuits.
+- Processor Clock Speed: 1.024 MHz.
+- Memory: 2,048 words of 16-bit RAM (magnetic core memory) and 36,864 words of ROM (core rope memory).
+- User Interface: Display and Keyboard unit known as the DSKy ("Dis-Key"), featuring numeric displays and Verb/Noun operation registers.
+- Error Handling: During Apollo 11's lunar descent, Radar Priority overload triggered Program Alarms 1201 and 1202. The real-time executive software designed by Margaret Hamilton dropped low-priority radar tasks to maintain guidance thrust calculations.
+
+SECTION 3: LUNAR MODULE (LM) LANDING TELEMETRY
+- Ascent Stage Mass: 4,700 kilograms containing crew cabin, environmental controls, and RCS thrusters.
+- Descent Stage Engine: Throttleable between 10% and 60% thrust (1,050 to 9,850 lbf) to enable fine pitch-over hover and terminal touchdown.
+- Surface Stay Contingency: Oxygen supply certified for up to 75 hours in nominal lunar EVA configurations.
