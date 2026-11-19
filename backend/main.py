@@ -176,13 +176,21 @@ async def upload_documents(files: List[UploadFile] = File(...)):
 
     try:
         metrics = ingest_documents(prepared_files)
+        total_chunks = metrics.get("total_chunks", 0)
+        if total_chunks == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="No extractable text found in the uploaded file(s). If uploading a PDF, please ensure it contains selectable text (not scanned images), or try a .txt/.md file."
+            )
         return {
             "success": True,
-            "indexed_files": metrics["indexed_files"],
-            "total_chunks_added": metrics["total_chunks"],
-            "total_indexed_chunks": metrics["total_indexed_chunks"],
-            "elapsed_ms": metrics["elapsed_ms"],
+            "indexed_files": metrics.get("indexed_files", []),
+            "total_chunks_added": total_chunks,
+            "total_indexed_chunks": metrics.get("total_indexed_chunks", 0),
+            "elapsed_ms": metrics.get("elapsed_ms", 0),
         }
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error during document ingestion: {e}")
         raise HTTPException(status_code=500, detail=f"Ingestion failed: {str(e)}")

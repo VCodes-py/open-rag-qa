@@ -345,6 +345,7 @@ def ingest_documents(
             return {
                 "indexed_files": [],
                 "total_chunks": 0,
+                "total_indexed_chunks": vector_store.total_vectors,
                 "elapsed_ms": int((time.time() - start_time) * 1000),
             }
 
