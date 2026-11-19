@@ -15,8 +15,6 @@ from backend.config import (
     TOP_K_RERANK,
     OLLAMA_BASE_URL,
     DEFAULT_OLLAMA_MODEL,
-    GROQ_API_KEY,
-    DEFAULT_GROQ_MODEL,
 )
 from backend.rag_pipeline import (
     get_embedding_model,
@@ -240,72 +238,7 @@ async def stream_rag_response(
     gen_start = time.time()
     token_count = 0
 
-    # 1. Cloud Fallback (Groq API for Render / Cloud deployment)
-    if GROQ_API_KEY:
-        groq_model = model if ("llama" in model.lower() and "-" in model) else DEFAULT_GROQ_MODEL
-        yield format_sse(
-            "status",
-            {"step": "generating", "message": f"Generating answer via Cloud Groq ({groq_model})..."},
-        )
-        headers = {
-            "Authorization": f"Bearer {GROQ_API_KEY}",
-            "Content-Type": "application/json",
-        }
-        payload = {
-            "model": groq_model,
-            "messages": [
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": query},
-            ],
-            "temperature": 0.1,
-            "stream": True,
-        }
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                async with client.stream(
-                    "POST", "https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload
-                ) as response:
-                    if response.status_code != 200:
-                        err_text = await response.aread()
-                        yield format_sse("error", {"error": f"Groq API Error ({response.status_code}): {err_text.decode('utf-8')}"})
-                        return
-
-                    async for line in response.aiter_lines():
-                        if line.startswith("data: "):
-                            data_chunk = line[6:].strip()
-                            if data_chunk == "[DONE]":
-                                break
-                            try:
-                                chunk_json = json.loads(data_chunk)
-                                delta = chunk_json.get("choices", [{}])[0].get("delta", {}).get("content", "")
-                                if delta:
-                                    token_count += 1
-                                    yield format_sse("token", {"token": delta})
-                            except json.JSONDecodeError:
-                                continue
-        except Exception as e:
-            logger.error(f"Groq API error: {e}")
-            yield format_sse("error", {"error": f"Groq generation failed: {str(e)}"})
-            return
-
-        gen_elapsed_ms = int((time.time() - gen_start) * 1000)
-        total_elapsed_ms = int((time.time() - total_start) * 1000)
-        yield format_sse(
-            "done",
-            {
-                "stats": {
-                    "retrieval_ms": s1_elapsed_ms,
-                    "rerank_ms": s2_elapsed_ms,
-                    "generation_ms": gen_elapsed_ms,
-                    "total_time_ms": total_elapsed_ms,
-                    "tokens_generated": token_count,
-                    "citations_count": len(top_passages),
-                }
-            },
-        )
-        return
-
-    # 2. Local Ollama Runtime
+    # Local Ollama Runtime
     ollama_url = f"{OLLAMA_BASE_URL.rstrip('/')}/api/generate"
     payload = {
         "model": model,
@@ -323,8 +256,7 @@ async def stream_rag_response(
             "Please ensure Ollama is installed and running:\n"
             "1. Start Ollama in your terminal: `ollama serve`\n"
             f"2. Pull the model if you haven't already: `ollama pull {model}`\n"
-            "3. Refresh or try asking your question again.\n\n"
-            "*(If deploying on Render, set `GROQ_API_KEY` in your environment variables for free instant cloud inference!)*"
+            "3. Refresh or try asking your question again."
         )
         yield format_sse("token", {"token": error_msg})
         yield format_sse(

@@ -16,8 +16,6 @@ from backend.config import (
     DEFAULT_OLLAMA_MODEL,
     EMBEDDING_MODEL_NAME,
     RERANKER_MODEL_NAME,
-    GROQ_API_KEY,
-    DEFAULT_GROQ_MODEL,
 )
 from backend.rag_pipeline import (
     ingest_documents,
@@ -71,13 +69,11 @@ class ChatRequest(BaseModel):
 
 @app.get("/api/health")
 def health_check():
-    """Check system health, vector store count, and Ollama connection status."""
+    """Check system health, vector store count, and local Ollama connection status."""
     stats = get_knowledge_base_stats()
 
     ollama_ok = False
-    if GROQ_API_KEY:
-        ollama_ok = True
-    elif check_ollama_port():
+    if check_ollama_port():
         try:
             with httpx.Client(timeout=2.0) as client:
                 resp = client.get(f"{OLLAMA_BASE_URL.rstrip('/')}/api/tags")
@@ -88,7 +84,7 @@ def health_check():
     return {
         "status": "healthy",
         "ollama_online": ollama_ok,
-        "runtime": "cloud-groq" if GROQ_API_KEY else "local-ollama",
+        "runtime": "local-ollama",
         "embedding_model": EMBEDDING_MODEL_NAME,
         "reranker_model": RERANKER_MODEL_NAME,
         "knowledge_base": stats,
@@ -97,22 +93,14 @@ def health_check():
 
 @app.get("/api/models")
 def list_models():
-    """Query local Ollama instance or return Cloud Groq models."""
-    if GROQ_API_KEY:
-        return {
-            "ollama_running": True,
-            "models": [
-                "llama-3.2-3b-preview",
-                "llama-3.1-8b-instant",
-                "llama-3.3-70b-versatile",
-                "mixtral-8x7b-32768",
-            ],
-            "default_model": DEFAULT_GROQ_MODEL,
-            "provider": "Groq Cloud (Free)",
-        }
-
+    """Query local Ollama instance for installed models."""
     if not check_ollama_port():
         return {
+            "ollama_running": False,
+            "models": [],
+            "default_model": DEFAULT_OLLAMA_MODEL,
+            "error": f"Ollama is offline or unreachable at {OLLAMA_BASE_URL}",
+        }
             "ollama_running": False,
             "models": [],
             "default_model": DEFAULT_OLLAMA_MODEL,

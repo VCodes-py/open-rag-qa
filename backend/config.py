@@ -33,7 +33,3 @@ TOP_K_RERANK = int(os.getenv("TOP_K_RERANK", 3))
 # Local LLM Runtime (Ollama)
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://127.0.0.1:11434")
 DEFAULT_OLLAMA_MODEL = os.getenv("DEFAULT_OLLAMA_MODEL", "llama3.2")
-
-# Cloud LLM Runtime Fallback (Groq - for Render / Cloud deployment)
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-DEFAULT_GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.2-3b-preview")
